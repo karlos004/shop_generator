@@ -38,7 +38,16 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    proxy: true
+  },
+  proxy: {
+    "/api": {
+      "target": "http://127.0.0.1:3000/",
+      "secure": false,
+      "changeOrigin": true
+    }
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {

@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
-    "heroku-postbuild": "cd api && npm install && pm2 start 'node ./bin/www'"
+    "start": "nuxt build && pm2 start 'nuxt start' && cd api && npm install && npm start",
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
