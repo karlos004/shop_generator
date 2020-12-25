@@ -1,0 +1,11 @@
+{
+  "jwt" : {
+    "token": "verysecretkey"
+  },
+  "db": {
+    "host": "localhost",
+    "user": "root",
+    "password": "root",
+    "database": "shop_gen"
+  }
+}

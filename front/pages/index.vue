@@ -6,32 +6,35 @@
         front
       </h1>
       <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+        <input v-model="name" placeholder="Name">
+        <button class="button--green" v-on:click="generate">Submit</button>
+        <div v-if="response">{{ this.response }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+import axios from "../.nuxt/axios";
+
+export default {
+  data() {
+    return {
+      response: '',
+      name: ''
+
+    }
+  },
+  methods: {
+    generate: function () {
+      this.$axios.$get('/api/generate?name=' + this.name)
+        .then(response => (this.response = response))
+    }
+  }
+}
 </script>
 
-<style>
+<style scoped>
 .container {
   margin: 0 auto;
   min-height: 100vh;

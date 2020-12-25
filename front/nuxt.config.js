@@ -31,10 +31,34 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:5000/',
+    proxy: true
+  },
+
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          required: true,
+          type: false
+        },
+        endpoints: {
+          login: { url: 'http://localhost:5000/auth/login', method: 'post', propertyName: 'token' },
+          user: { url: 'http://localhost:5000/auth/me', method: 'get', propertyName: '' },
+          logout: false
+        }
+      }
+    }
+  },
+
+  proxy: {
+    '/api': 'http://localhost:5000/',
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
