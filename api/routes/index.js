@@ -29,6 +29,13 @@ router.get('/', function (req, res) {
   res.send(`<pre>${JSON.stringify(routes, undefined, "    ")}</pre>`);
 });
 
+router.get('/test', function (req, res) {
+  db.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+    if (error) throw error;
+    res.json(results[0].solution);
+  });
+});
+
 router.get('/generate', function(req, res, next) {
   var username = req.query.name;
   console.log(username);
