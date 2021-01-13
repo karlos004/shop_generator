@@ -13,7 +13,8 @@
     "@nuxtjs/axios": "^5.12.3",
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
-    "vue-select": "^3.11.2"
+    "vue-select": "^3.11.2",
+    "vue-sweetalert2": "^4.1.1"
   },
   "devDependencies": {
     "fibers": "^5.0.0",

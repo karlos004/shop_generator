@@ -23,12 +23,25 @@
           GitHub
         </a>
       </div>
+      <div v-if="products">{{ products }}</div>
+      <div v-if="users">{{ users }}</div>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data(){
+    return{
+      users: '',
+      products: ''
+    }
+  },
+  mounted: async function(){
+    this.users = await this.$axios.$get('/api/getUsers');
+    this.products = await this.$axios.$get('/api/getProducts');
+  }
+}
 </script>
 
 <style>

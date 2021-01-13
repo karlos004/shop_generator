@@ -6,6 +6,9 @@ var path = require('path');
 var shell = require('shelljs');
 var mysql = require("mysql");
 const bcrypt = require('bcrypt');
+const sqlite3 = require("sqlite3");
+const multer  = require('multer');
+const upload = multer({ dest: './public/images/' });
 
 var config = require('../config/config.json');
 
@@ -36,9 +39,13 @@ router.get('/test', function (req, res) {
   });
 });
 
-router.get('/generate', function(req, res, next) {
+router.post('/generate', upload.any(), async function(req, res, next) {
   var username = req.query.name;
+  var shop = JSON.parse(req.body.shop);
+  var file = req.files[0];
+  console.log(file);
   console.log(username);
+  console.log(shop);
   var uid = uniqid(`${username}-`);
   console.log(uid);
   var spath = path.join(__dirname, '/../templates/2');
@@ -52,19 +59,37 @@ router.get('/generate', function(req, res, next) {
     console.error(err)
   }
   shell.cd('./temp/' + uid);
-  shell.exec("git init && git add . && git commit -m 'init'");
-  shell.exec('heroku create ' + uid + ' --region eu', function(code, stdout, stderr) {
-    shell.exec('git push heroku master', function(code, stdout, stderr) {
-      console.log('Exit code:', code);
-      console.log('Program output:', stdout);
-      console.log('Program stderr:', stderr);
-      shell.cd('../');
-      fs.remove(dpath, err => {
-        if (err) return console.error(err)
-        console.log('success!')
-      })
-      res.send({ "shop_uid": uid, "git_url": `https://git.heroku.com/${uid}.git`, "shop_url": `https://${uid}.herokuapp.com` });
-    });
+  let db = new sqlite3.Database('./api/database.db', async (err) => {
+    if (err) {
+      // Cannot open database
+      console.error(err.message)
+      throw err
+    }else{
+      console.log('Connected to the SQLite database.');
+      var insert = 'INSERT INTO users (email, password, role) VALUES (?,?,?)';
+      db.run(insert, [shop.admin.username,shop.admin.password,2]);
+      await shop.products.forEach(function (product) {
+        let insert = 'INSERT INTO products (name, price, category) VALUES (?,?,?)';
+        db.run(insert, [product.name, product.price, product.category]);
+        console.log(product);
+      });
+      db.close();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      shell.exec("git init && git add . && git commit -m 'init'");
+      shell.exec('heroku create ' + uid + ' --region eu', function(code, stdout, stderr) {
+        shell.exec('git push heroku master', function(code, stdout, stderr) {
+          console.log('Exit code:', code);
+          console.log('Program output:', stdout);
+          console.log('Program stderr:', stderr);
+          shell.cd('../');
+          fs.remove(dpath, err => {
+            if (err) return console.error(err)
+            console.log('success!')
+          })
+          res.send({ "shop_uid": uid, "git_url": `https://git.heroku.com/${uid}.git`, "shop_url": `https://${uid}.herokuapp.com` });
+        });
+      });
+    }
   });
 });
 
