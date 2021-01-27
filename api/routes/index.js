@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var uniqid = require('uniqid');
 const fs = require('fs-extra');
+const fsold = require('fs');
 var path = require('path');
 var shell = require('shelljs');
 var mysql = require("mysql");
@@ -41,6 +42,7 @@ router.get('/test', function (req, res) {
 
 router.post('/generate', upload.any(), async function(req, res, next) {
   var username = req.query.name;
+  username = username.replace(/\s/g, '').toLowerCase();
   var shop = JSON.parse(req.body.shop);
   var file = req.files[0];
   console.log(file);
@@ -59,6 +61,19 @@ router.post('/generate', upload.any(), async function(req, res, next) {
     console.error(err)
   }
   shell.cd('./temp/' + uid);
+  if (shop.js){
+    let base64 = shop.js.split(';base64,').pop();
+    fsold.writeFile(dpath + "/api/routes/user.js", base64, {encoding: 'base64'}, function(err) {
+      console.log('File created');
+    });
+  }
+  const fileName = dpath + '/package.json';
+  const json = require(fileName);
+
+  json.shop_name = shop.name;
+  console.log(json);
+
+  fsold.writeFileSync('./package.json', JSON.stringify(json));
   let db = new sqlite3.Database('./api/database.db', async (err) => {
     if (err) {
       // Cannot open database
@@ -73,6 +88,11 @@ router.post('/generate', upload.any(), async function(req, res, next) {
         db.run(insert, [product.name, product.price, product.category]);
         console.log(product);
       });
+      await shop.categories.forEach(function (category) {
+        let insert = 'INSERT INTO category (name) VALUES (?)';
+        db.run(insert, [category]);
+        console.log(category);
+      });
       db.close();
       await new Promise(resolve => setTimeout(resolve, 5000));
       shell.exec("git init && git add . && git commit -m 'init'");
@@ -86,6 +106,7 @@ router.post('/generate', upload.any(), async function(req, res, next) {
             if (err) return console.error(err)
             console.log('success!')
           })
+          shell.cd('../');
           res.send({ "shop_uid": uid, "git_url": `https://git.heroku.com/${uid}.git`, "shop_url": `https://${uid}.herokuapp.com` });
         });
       });

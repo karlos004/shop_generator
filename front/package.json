@@ -1,5 +1,5 @@
 {
-  "name": "front",
+  "name": "Generator",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "@nuxtjs/axios": "^5.12.3",
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
+    "vue-password-strength-meter": "^1.7.2",
     "vue-select": "^3.11.2",
     "vue-sweetalert2": "^4.1.1"
   },

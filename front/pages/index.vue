@@ -3,7 +3,7 @@
     <div>
       <Logo />
       <h1 class="title">
-        front
+        {{ $store.getters.appName }}
       </h1>
       <div class="links">
         <input v-model="name" placeholder="Name">

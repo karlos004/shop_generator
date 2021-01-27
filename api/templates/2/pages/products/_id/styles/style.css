@@ -1,0 +1,90 @@
+.edit{
+    margin: 0 auto;
+    height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: inherit !important;
+    text-align: center;
+    padding-top: 50px;
+}
+
+.edit .wrapper{
+    width: 80%;
+}
+  
+.top-bar{
+    display: flex;
+    justify-content: space-around;
+}
+
+.top-bar .image-wrapper{
+    padding: 20px;
+    width: 350px;
+}
+
+.top-bar .image-wrapper img{
+    max-width: 100%;
+    height: auto;
+}
+
+.controls{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.controls div{
+    margin-bottom: 20px;
+}
+
+.controls .name{
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 50px;
+}
+.controls #price{
+    width: 40%;
+}
+
+.description{
+    width: 70%;
+    margin: auto;
+    text-align: initial;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 50px;
+}
+
+.active{
+    display: block;
+}
+.hide{
+    display: none;
+}
+
+.butt{
+    min-height: 40px;
+  font-size: 16px;
+  color: #FFFFFF;
+  width: 120px;
+  height: 40px;
+  background: #2376ae;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  margin-top: auto;
+  align-self: flex-end;
+  justify-self: flex-end;
+  cursor: pointer;
+}
+
+.disabled{
+    cursor: not-allowed;
+    background-color: lightgray;
+}
+
+.save{
+    margin-bottom: 20px;
+}

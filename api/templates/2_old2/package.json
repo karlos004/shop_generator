@@ -1,0 +1,23 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "shop_name": "",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "start": "nuxt build && pm2 start 'nuxt start' && cd api && npm install && npm start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/auth-next": "^5.0.0-1607534757.1122b76",
+    "@nuxtjs/axios": "^5.12.2",
+    "core-js": "^3.6.5",
+    "nuxt": "^2.14.6",
+    "pm2": "^4.5.0",
+    "quill-image-resize-module": "^3.0.0",
+    "sass": "^1.32.5",
+    "sass-loader": "^10.1.1",
+    "vue-quill-editor": "^3.0.6",
+    "vue-select": "^3.11.2"
+  }
+}

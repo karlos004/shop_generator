@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container generator">
     <div id="controls" class="controls-wrapper">
       <div id="myProgress">
         <div id="myBar">0%</div>
@@ -12,84 +12,184 @@
           <li @click="move_step(4)">Create administrator account</li>
           <li @click="move_step(5)">Add product categories</li>
           <li @click="move_step(6)">Add products</li>
-          <li @click="move_step(7)">Summary</li>
+          <li @click="move_step(7)">Custom JS</li>
+          <li @click="move_step(8)">Summary</li>
         </ul>
       </div>
     </div>
     <div id="setup" class="setup-wrapper">
       <div class="setup-item get-started">
-        <span>Get started</span>
-        <button @click="start">Start</button>
+        <div class="title">
+          <h1>Get started</h1>
+        </div>
+        <span>
+          Welcome to generator page. <br>
+          You will be guided through configuration process of your new shop. You can navigate between the configuration steps through the menu on the left. <br>
+          You can also change any option at any time during the site setup process if you make a mistake or want to change options. <br>
+          Once you have gone through all the configuration steps, a page summary will be displayed where you can check if the options you entered are correct. <br>
+        </span>
+        <button @click="start" class="button-next">Start</button>
       </div>
       <div class="setup-item app-name">
-        <span>Enter shop name</span>
-        <input v-model="shop.name" type="text">
-        <button @click="next_step">Next</button>
+        <div class="title">
+          <h1>Add shop name</h1>
+        </div>
+        <span>
+          Enter shop name. Name is used to help identify this shop from your other generated shops.
+        </span>
+        <div class="input-wrapper">
+          <input v-model="shop.name" type="text">
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item shop-logo">
-        <span>Upload shop logo</span>
-        <div class="large-12 medium-12 small-12 cell">
-          <label>File
-            <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
-          </label>
+        <div class="title">
+          <h1>Upload shop logo</h1>
         </div>
-        <button @click="next_step">Next</button>
+        <span>
+          Enter shop name. Name is used to help identify this shop from your other generated shops.
+        </span>
+        <div class="file-upload">
+          <div>
+            <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+          </div>
+          <div v-if="logo_preview" class="logo-preview">
+            <div>Logo preview</div>
+            <img :src="logo_preview" alt="">
+          </div>
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item template">
-        <span>Select template for your shop</span>
-        <input v-model="shop.template" type="text">
-        <button @click="next_step">Next</button>
+        <div class="title">
+          <h1>Select template for your shop</h1>
+        </div>
+        <div class="template-selection">
+          <div class="select-1">
+            <div class="navbar"></div>
+            <div class="content"></div>
+          </div>
+          <div class="select-2">
+            <div class="navbar"></div>
+            <div class="content-wrapper">
+              <div class="side-menu"></div>
+              <div class="content"></div>
+            </div>
+          </div>
+        </div>
+        <input hidden v-model="shop.template" type="text">
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item admin-account">
-        <span>Create administrator account</span>
-        <input v-model="shop.admin.username" type="text">
-        <input v-model="shop.admin.password" type="password">
-        <button @click="next_step">Next</button>
+        <div class="title">
+          <h1>Create administrator account</h1>
+        </div>
+        <span>Create your shop administrator account to be able to modify the content of the generated shop.</span>
+        <div class="input-wrapper">
+          <span>Email: </span>
+          <input v-model="shop.admin.username" type="text" class="username">
+          <client-only>
+            <span>Password: </span>
+            <password v-model="shop.admin.password" :badge="false" :toggle="true" defaultClass="test"/>
+          </client-only>
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item categories">
-        <span>Add product categories</span>
+        <div class="title">
+          <h1>Add product categories</h1>
+        </div>
         <ul>
-          <li v-for="category in shop.categories">
-            {{ category }}
+          <li v-for="(category, index) in shop.categories">
+            <input type="text" v-model="shop.categories[index]" disabled>
+            <button @click="deleteCategory(index)">
+              <img src="~/assets/images/bin.svg" alt="">
+            </button>
           </li>
         </ul>
-        <input v-model="category" type="text">
-        <button type="button" @click="add_category">Add</button>
-        <button @click="next_step">Next</button>
+        <div class="new-item">
+          <input v-model="category" type="text">
+          <button type="button" @click="add_category">+</button>
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item products">
-        <span>Add products</span>
-        <div>
+        <div class="title">
+          <h1>Add products</h1>
+        </div>
+        <div class="products-list">
           <ul>
-            <li v-for="product in shop.products">
-              {{ product.name }}
+            <li v-for="(product, index) in shop.products">
+              <div class="product-name"> {{ product.name }} </div>
               <v-select v-model="product.category" :options="shop.categories"/>
-              {{ product.price }}
+              <div class="product-price"> {{ product.price }} </div>
+              <button @click="deleteProduct(index)" class="delete">
+                <img src="~/assets/images/bin.svg" alt="">
+              </button>
             </li>
           </ul>
         </div>
-        <input v-model="product_name" type="text">
-        <client-only>
-          <v-select v-model="selected_category" :options="shop.categories"/>
-        </client-only>
-        <input type="number" v-model="product_price">
-        <button type="button" @click="add_product">Add</button>
-        <button @click="next_step">Next</button>
+        <div class="new-product">
+          <input v-model="product_name" type="text" placeholder="Name">
+          <client-only>
+            <v-select v-model="selected_category" :options="shop.categories" placeholder="Select category"/>
+          </client-only>
+          <input type="number" v-model="product_price" placeholder="Price">
+          <button type="button" @click="add_product" class="add">+</button>
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
+      </div>
+      <div class="setup-item custom-js">
+        <div class="title">
+          <h1>Add custom Javascript file</h1>
+        </div>
+        <span>
+          Add a custom JavaScript file to be able to use custom endpoints in the api. When you add the file it will be available at /api/user.
+        </span>
+        <div style="margin-top: 30px">
+          <input type="file" id="fileJS" ref="JS" v-on:change="handleJSUpload()"/>
+        </div>
+        <button @click="next_step" class="button-next">Next</button>
       </div>
       <div class="setup-item summary">
-        <span>summary</span>
-        {{ shop }}
-        <img :src="logo_preview" alt="" width="150px" height="200px">
-        <button @click="generate">Submit</button>
+        <div class="title">
+          <h1>Summary</h1>
+        </div>
+        <span class="item">Shop name: {{ shop.name }}</span>
+        <span class="item">Product categories added: {{ shop.categories.length }}</span>
+        <span class="item">Products added: {{ shop.products.length }}</span>
+        <div class="item" style="display: flex">
+          <div style="margin-right: 20px">Admin account: </div>
+          <div v-if="!show_admin">
+            <span @click="show_admin = !show_admin">Show</span>
+          </div>
+          <div v-else>
+            <span @click="show_admin = !show_admin">Hide</span>
+            <div> Email: {{ shop.admin.username }}</div>
+            <div> Password: {{ shop.admin.password }}</div>
+          </div>
+        </div>
+        <div class="item">
+          Custom JS:
+          <span v-if="shop.js">Yes</span>
+          <span v-else>No</span>
+        </div>
+        <button @click="generate" class="button-next">Submit</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Password from "vue-password-strength-meter";
+
 export default {
+  components: {
+    Password
+  },
   data(){
     return{
+      show_admin: false,
       step: 0,
       category: '',
       selected_category: '',
@@ -100,6 +200,7 @@ export default {
       shop: {
         name: '',
         template: '',
+        js: '',
         admin: {
           username: '',
           password: ''
@@ -110,6 +211,12 @@ export default {
     }
   },
   methods: {
+    deleteCategory: function(index) {
+      this.shop.categories.splice(index, 1);
+    },
+    deleteProduct: function(index) {
+      this.shop.products.splice(index, 1);
+    },
     handleFileUpload(){
       this.logo = this.$refs.file.files[0];
       var reader = new FileReader();
@@ -123,6 +230,19 @@ export default {
       }
       //this.logo = this.$refs.file.files[0];
       console.log(this.$refs.file.files[0])
+    },
+    handleJSUpload(){
+      var reader = new FileReader();
+      var self = this;
+      reader.addEventListener("load", function () {
+        self.shop.js = reader.result;
+      }, false);
+
+      if (this.$refs.JS.files[0]) {
+        reader.readAsDataURL(this.$refs.JS.files[0]);
+      }
+      //this.logo = this.$refs.file.files[0];
+      console.log(this.$refs.JS.files[0])
     },
     generate(){
       let formData = new FormData();
@@ -196,7 +316,7 @@ export default {
       li[this.step].classList.add('active');
       controls.style.display = 'block';
       setup.children[this.step].style.display = 'none';
-      setup.children[this.step + 1].style.display = 'block';
+      setup.children[this.step + 1].style.display = 'flex';
       this.step += 1;
       this.move_bar();
     },
@@ -206,7 +326,7 @@ export default {
       li[this.step - 1].classList.remove('active');
       li[new_step - 1].classList.add('active');
       setup.children[this.step].style.display = 'none';
-      setup.children[new_step].style.display = 'block';
+      setup.children[new_step].style.display = 'flex';
       this.step = new_step;
       this.move_bar();
     },
@@ -217,7 +337,7 @@ export default {
         li[this.step - 1].classList.remove('active');
         li[this.step].classList.add('active');
         setup.children[this.step].style.display = 'none';
-        setup.children[this.step + 1].style.display = 'block';
+        setup.children[this.step + 1].style.display = 'flex';
         this.step += 1;
         this.move_bar();
       }else{
@@ -241,7 +361,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from , next) {
-    const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+    const answer = window.confirm('Do you really want to leave? You have unsaved changes!')
     if (answer) {
       next()
     } else {
@@ -251,79 +371,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
-.container{
-  height: calc(100vh - 80px);
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-}
-.setup-wrapper{
-  border-radius: 15px;
-  box-shadow: 2px 3px 8px lightgrey;
-  width: 70%;
-  height: 75%;
-}
-.controls-wrapper{
-  display: none;
-  border-radius: 15px;
-  box-shadow: 2px 3px 8px lightgray;
-  width: 25%;
-  height: 75%;
-}
-
-.app-name{
-  display: none;
-}
-
-.setup-item{
-  width: 100%;
-  height: 100%;
-  display: none;
-}
-.get-started{
-  display: block;
-}
-
-.active{
-  color: black;
-  font-weight: 900;
-  padding-left: 20px;
-}
-
-.step-list-wrapper{
-  padding-left: 30px;
-  margin-top: 50px;
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
-}
-
-.step-list{
-  color: grey;
-  list-style-type: none;
-  padding: 0;
-}
-
-.step-list li{
-  margin-top: 15px;
-  transition: padding-left 0.2s;
-}
-
-#myProgress{
-  margin: 20px 10px;
-}
-
-#myBar {
-  border-radius: 5px;
-  width: 10%;
-  height: 30px;
-  background-color: #4CAF50;
-  text-align: center;
-  line-height: 30px;
-  color: white;
-  transition: width 1s;
-}
+@import './styles/style.css';
 
 </style>
