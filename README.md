@@ -1,11 +1,11 @@
-#Shop Generator
-###Requirements:
+# Shop Generator
+### Requirements:
 - Git ([Download](https://git-scm.com/))
 - Node.js + npm min. 14.15 recommended latest ([Download](https://nodejs.org/en/))
 - Heroku account + HerokuCLI ([Register and download](https://nodejs.org/en/))
 - MySQL Database
 
-###Steps:
+### Steps:
 1. Install Node.js, Git and HerokuCLI(https://devcenter.heroku.com/articles/heroku-cli)
 2. From Git Bash run commands to check if everything is installed
     ```shell
