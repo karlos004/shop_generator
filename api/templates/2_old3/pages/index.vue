@@ -3,38 +3,47 @@
     <div>
       <Logo />
       <h1 class="title">
-        {{ $store.getters.appName }}
+        Welcome to <br> {{ $store.getters.appName }}
       </h1>
-      <div class="links">
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "../.nuxt/axios";
-
 export default {
-  data() {
-    return {
-      response: '',
-      name: ''
-
+  data(){
+    return{
+      editor: '',
+      select: 'GPU'
     }
   },
+  async fetch({store}) {
+      await store.dispatch('products/downloadAllProducts');
+  },
+  mounted: function(){
+    
+  },
   methods: {
-    generate: function () {
-      this.$axios.$get('/api/generate?name=' + this.name)
-        .then(response => (this.response = response))
+  	handleData: function(e) {
+      console.log(e);
+      this.editor = e;
     }
+  },
+  computed: {
+      products() {
+        return this.$store.getters['products/getAllProducts'];
+      },
+      productsCategory() {
+        return this.$store.getters['products/getByCategoryProducts'](this.select);
+      }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .container {
   margin: 0 auto;
-  min-height: 100vh;
+  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;

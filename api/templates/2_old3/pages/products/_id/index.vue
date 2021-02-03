@@ -14,7 +14,7 @@
             <nuxt-link :to="'/products/edit/' + product[0].product_id">Edit this item</nuxt-link>
           </div>
           <div v-if="available">
-            <button class="butt" @click="test()">Add to cart</button>
+            <button class="butt">Add to cart</button>
           </div>
           <div v-else>
             <div style="color: red;">Out of stock</div>
@@ -30,7 +30,6 @@
 
 <script>
 import editor from '@/components/editor.vue';
-import { mapMutations } from 'vuex'
 export default {
   components: { editor },
   data(){
@@ -44,18 +43,6 @@ export default {
       await store.dispatch('products/downloadAllProducts');
   },
   methods: {
-    test(){
-      var json = {name: '', price: '', product_id: ''}
-      json.name = this.product[0].name;
-      json.price = this.product[0].price;
-      json.product_id = this.product[0].product_id;
-      console.log(json);
-      this.addToCart(json);
-    },
-    ...mapMutations({
-      addToCart: 'cart/add',
-      removeFromCart: 'cart/remove'
-    }),
     photo(){
       document.getElementById('file').click();
     },

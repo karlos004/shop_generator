@@ -9,9 +9,6 @@
           <nuxt-link to="/products" class="nav-links">Products</nuxt-link>
         </li>
         <li>
-          <nuxt-link to="/cart" class="nav-links">Cart ({{ numberOfItems }})</nuxt-link>
-        </li>
-        <li>
           <nuxt-link to="/login" class="nav-links">Login</nuxt-link>
         </li>
         <li>
@@ -21,12 +18,7 @@
     <ul v-else class="main-nav" id="js-menu">
       <li>
         <nuxt-link to="/" class="nav-links">Home</nuxt-link>
-      </li>
-      <li>
         <nuxt-link to="/products" class="nav-links">Products</nuxt-link>
-      </li>
-      <li>
-          <nuxt-link to="/cart" class="nav-links">Cart ({{ numberOfItems }})</nuxt-link>
       </li>
       <li>
         <div class="dropdown hide-on-mobile" >
@@ -75,10 +67,7 @@ name: "navbar",
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser']),
-    numberOfItems() {
-      return this.$store.getters['cart/numberOfItems']
-    }
+    ...mapGetters(['isAuthenticated', 'loggedInUser'])
   }
 }
 </script>

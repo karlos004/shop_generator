@@ -3,34 +3,36 @@
     <div v-if="product[0]" class="wrapper">
       <div class="top-bar">
         <div class="image-wrapper">
-          <div v-if="product[0].image">
-            <img :src="product[0].image" alt="image">
+          <div v-if="picture">
+            <img :src="picture" alt="image">
           </div>
+          <div v-else>
+            <div v-if="product[0].image">
+              <img :src="product[0].image" alt="image">
+            </div>
+          </div>
+          <button class="butt" @click="photo">Upload photo</button>
+          <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" style="display:none;"/>
         </div>
         <div class="controls">
           <div class="name"> {{product[0].name}} </div>
-          <div> Price: {{ product[0].price }} $ </div>
-          <div v-if="$store.state.auth.user.role == 2">
-            <nuxt-link :to="'/products/edit/' + product[0].product_id">Edit this item</nuxt-link>
-          </div>
-          <div v-if="available">
-            <button class="butt" @click="test()">Add to cart</button>
-          </div>
-          <div v-else>
-            <div style="color: red;">Out of stock</div>
-            <button class="butt disabled" disabled>Add to cart</button>
-          </div>
+          <div> <label> Price: <input type="number" :value="product[0].price" id="price"> $ </label> </div>
+          <div> <label><input type="checkbox" :checked="available" id="status"> Available</label> </div>
         </div>
       </div>
-      <div v-if="product[0].description" v-html="product[0].description" class="description"></div>
-      <div v-else class="description"> Description is not avaliable for this item</div>
+      <button @click="preview" class="butt">Show preview</button>
+      <div v-if="show_preview" v-html="editor" class="description"></div>
+      <div class="active" v-bind:class="{ hide: show_preview }">
+        <editor @newdata="handleData($event)" :prop="product[0].description"/>
+      </div>
+      <button class="butt save" @click="send()">Save</button>
+      <button class="butt save" @click="deleteProduct()">Delete</button>
     </div>
   </div>
 </template>
 
 <script>
 import editor from '@/components/editor.vue';
-import { mapMutations } from 'vuex'
 export default {
   components: { editor },
   data(){
@@ -44,18 +46,6 @@ export default {
       await store.dispatch('products/downloadAllProducts');
   },
   methods: {
-    test(){
-      var json = {name: '', price: '', product_id: ''}
-      json.name = this.product[0].name;
-      json.price = this.product[0].price;
-      json.product_id = this.product[0].product_id;
-      console.log(json);
-      this.addToCart(json);
-    },
-    ...mapMutations({
-      addToCart: 'cart/add',
-      removeFromCart: 'cart/remove'
-    }),
     photo(){
       document.getElementById('file').click();
     },
@@ -72,6 +62,10 @@ export default {
       }
       //this.logo = this.$refs.file.files[0];
       console.log(this.$refs.file.files[0])
+    },
+    deleteProduct(){
+      this.$axios.$post('/api/deleteProduct/' + this.$route.params.id);
+      this.$router.push('/products/edit')
     },
     send(){
       var price = document.getElementById('price').value
@@ -90,6 +84,7 @@ export default {
       this.$axios.$post('/api/editProduct/' + this.$route.params.id , {
         data: json
       });
+      this.$router.push('/products/edit');
       // console.log(description);
       // console.log(price);
       // console.log(status);
@@ -120,4 +115,7 @@ export default {
 
 <style lang="scss" scoped>
 @import './styles/style.css';
+@import './styles/quill.snow.css';
+@import './styles/quill.bubble.css';
+@import './styles/quill.core.css';
 </style>
